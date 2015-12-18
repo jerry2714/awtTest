@@ -5,43 +5,17 @@ import java.awt.image.*;
 import java.io.*;
 import javax.imageio.*;
 
-
-class DoubleBufCanvas extends Canvas
+class Ghost extends GameObject
 {
-	BufferedImage img;
-	Graphics2D g2d;
-	
-	public void paintCanvas(Graphics g){}
-	
-	
-	public void update(Graphics g)
+	public Ghost(String str)
 	{
-		if(img == null){
-			img = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
-		}
-		Graphics2D canvas = img.createGraphics();
-		canvas.clearRect(0, 0, getWidth(), getHeight());
-		paintCanvas(canvas);
-		//g.drawImage(img, 0, 0, this);
-		paint(g);
-	}
-	public void paint(Graphics g)
-	{
-		g.drawImage(img, 0, 0, this);
-	}
-}
-class Ghost extends DoubleBufCanvas implements Runnable
-{
-	BufferedImage img;
-	int fps = 30;
-	int ox, oy, x, y;
-	public Ghost()
-	{
-		try {
-            img = ImageIO.read(new File("ghost.png"));
+		try
+		{
+            img = ImageIO.read(new File(str));
         }
-        catch (Exception ex) {
-            System.out.println("No ghost.png!!");
+        catch (Exception ex)
+		{
+            System.out.println(str);
         }
 		// setSize(50, 50);
 		ox = oy = x = y = 0;
@@ -49,27 +23,35 @@ class Ghost extends DoubleBufCanvas implements Runnable
 	}
 	public void paintCanvas(Graphics g)
 	{
-		g.drawImage(img, x, y, 50, 50, this);
-	} 
-	public void run()
-	{
-		for(int i = 0; i < 500; i++)
+		/*if(img == null)
+			System.out.println("ghost missed");*/
+		try
 		{
-			x = ox + 1;
-			y = oy;
-			
-			ox = x;
-			oy = y;
-			repaint();
-			try
-			{
-				Thread.sleep(1000/fps);
-			}
-			catch(Exception e)
-			{
-				System.exit(0);
-			}
+			g.drawImage(img, x, y, 50, 50, this);
 		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+	} 
+	public void move()
+	{
+		//int j = 0;
+		/*for(int i = 0; i < 5000; i++)
+		{
+			if(j == 10)
+			{
+				x = ox+1;
+				y = oy;
+			
+				ox = x;
+				oy = y;
+				j = 0;
+			}
+			else
+				j++;
+			
+		}*/
 	}
 }
 
@@ -81,30 +63,34 @@ public class RunningGhost extends Frame
 	{
 		RunningGhost frm = new RunningGhost("Running Ghost");
 		Panel panel = new Panel();
-		Ghost ghost = new Ghost();
+		GameDraw gd = new GameDraw();
+		Ghost ghost = new Ghost("src\\images\\Ghost.png");
 		
-		Thread t1 = new Thread(ghost);
+		
 		frm.setSize(800, 600);
 		frm.setLocation(100, 100);
-		
+		panel.setLayout(new BorderLayout());
+		frm.setBackground(new Color(255, 255, 0));
+		frm.addWindowListener(new WinLis());
 		
 		frm.add(panel);
+		panel.add(gd);
 		
-		panel.setLayout(new BorderLayout());
 		
-		panel.add(ghost);
-		
-		frm.setBackground(new Color(0, 0, 0));
-		frm.addWindowListener(new WinLis());
 		frm.setVisible(true);
-		t1.start();
 		
+		//panel.setBackground(new Color(0, 0, 0));
+		gd.init();
+		gd.addToList(ghost);
+		
+		Thread t1 = new Thread(gd);
+		t1.start();
 	}
 	public void paint(Graphics g)
 	{
 		Rectangle rect = g.getClipBounds();
-		System.out.println(rect.width + " " + rect.height);
-		System.out.println(rect.x + " " + rect.y);
+		// System.out.println(rect.width + " " + rect.height);
+		// System.out.println(rect.x + " " + rect.y);
 	}
 	
 	static class WinLis extends WindowAdapter
