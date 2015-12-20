@@ -5,66 +5,17 @@ import java.awt.image.*;
 import java.io.*;
 import javax.imageio.*;
 
-class Ghost extends GameObject
-{
-	public Ghost(String str)
-	{
-		try
-		{
-            img = ImageIO.read(new File(str));
-        }
-        catch (Exception ex)
-		{
-            System.out.println(str);
-        }
-		// setSize(50, 50);
-		ox = oy = x = y = 0;
-		//System.out.println(""+isDoubleBuffered());
-	}
-	public void paintCanvas(Graphics g)
-	{
-		/*if(img == null)
-			System.out.println("ghost missed");*/
-		try
-		{
-			g.drawImage(img, x, y, 50, 50, this);
-		}
-		catch(Exception e)
-		{
-			System.out.println(e.getMessage());
-		}
-	} 
-	public void move()
-	{
-		//int j = 0;
-		/*for(int i = 0; i < 5000; i++)
-		{
-			if(j == 10)
-			{
-				x = ox+1;
-				y = oy;
-			
-				ox = x;
-				oy = y;
-				j = 0;
-			}
-			else
-				j++;
-			
-		}*/
-	}
-}
-
 public class RunningGhost extends Frame
 {
 	public RunningGhost(){}
 	public RunningGhost(String str){super(str);}
+	static Ghost ghost1 = new Ghost("src\\images\\Ghost1.png");
+	static Ghost ghost2 = new Ghost("src\\images\\Ghost2.png");
 	public static void main(String args[])
 	{
 		RunningGhost frm = new RunningGhost("Running Ghost");
 		Panel panel = new Panel();
 		GameDraw gd = new GameDraw();
-		Ghost ghost = new Ghost("src\\images\\Ghost.png");
 		
 		
 		frm.setSize(800, 600);
@@ -78,20 +29,21 @@ public class RunningGhost extends Frame
 		
 		
 		frm.setVisible(true);
+		frm.addKeyListener(new KeyLis());
+		frm.requestFocus();
 		
 		//panel.setBackground(new Color(0, 0, 0));
 		gd.init();
-		gd.addToList(ghost);
+		gd.addToList(ghost1);
+		gd.addToList(ghost2);
+		ghost2.setPosition(700, 50);
+		ghost1.setDirection(GameObject.Direction.RIGHT);
+		ghost2.setDirection(GameObject.Direction.LEFT);
 		
 		Thread t1 = new Thread(gd);
 		t1.start();
 	}
-	public void paint(Graphics g)
-	{
-		Rectangle rect = g.getClipBounds();
-		// System.out.println(rect.width + " " + rect.height);
-		// System.out.println(rect.x + " " + rect.y);
-	}
+	
 	
 	static class WinLis extends WindowAdapter
 	{
@@ -99,6 +51,32 @@ public class RunningGhost extends Frame
 		{
 			Frame frm = (Frame)e.getSource();
 			frm.dispose();
+			System.exit(0);
+		}
+	}
+	static class KeyLis extends KeyAdapter
+	{
+		public void keyPressed(KeyEvent e)
+		{
+			int k = e.getKeyCode();
+			switch(k)
+			{
+				case e.VK_UP:
+					ghost1.setDirection(GameObject.Direction.UP);
+					break;
+				case KeyEvent.VK_DOWN:
+					ghost1.setDirection(GameObject.Direction.DOWN);
+					break;
+				case KeyEvent.VK_LEFT:
+					ghost1.setDirection(GameObject.Direction.LEFT);
+					break;
+				case KeyEvent.VK_RIGHT:
+					ghost1.setDirection(GameObject.Direction.RIGHT);
+					break;
+			}
+		}
+		public void keyReleased(KeyEvent e)
+		{
 		}
 	}
 }

@@ -60,15 +60,16 @@ class GameDraw extends Canvas implements Runnable
 			
 			try
 			{
-				Thread.sleep(1000);
-				
+				g2d.clearRect(0, 0, getWidth(), getHeight());
 				while(listItr.hasNext())
 				{
-					System.out.println("1");
+					//System.out.println("1");
 					go = listItr.next();
+					
 					go.paintCanvas(g2d);
 				}
 				repaint();
+				Thread.sleep(100);
 			}
 			catch(InterruptedException e)
 			{
@@ -84,9 +85,11 @@ class GameObject extends GameDraw implements Comparable<GameObject>
 	private int priority;//繪圖優先權(最大的最後繪製，所以蓋在最上面)
 	BufferedImage img;	//此物件目前的完整圖形
 	int ox, oy, x, y;	//上一次座標、新座標
-	
+	public static enum Direction{CENTER, RIGHT, LEFT, UP, DOWN}//物件移動方向，CENTER代表不動
+	Direction direction = Direction.CENTER;//物件移動方向
 	public void setPriority(int a){priority = a;}
-	
+	public void setPosition(int x, int y){this.x = x; this.y = y;}
+	public void setDirection(Direction d){direction = d;}
 	
 	// public void show1(){System.out.println(priority);}
 	
