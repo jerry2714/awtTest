@@ -5,15 +5,14 @@ import java.awt.image.*;
 import java.io.*;
 import javax.imageio.*;
 
-public class RunningGhost extends Frame
+public class DrawTest extends Frame
 {
-	public RunningGhost(){}
-	public RunningGhost(String str){super(str);}
-	static Ghost ghost1 = new Ghost("src\\images\\Ghost1.png");
-	static Ghost ghost2 = new Ghost("src\\images\\Ghost2.png");
+	public DrawTest(){}
+	public DrawTest(String str){super(str);}
+
 	public static void main(String args[])
 	{
-		RunningGhost frm = new RunningGhost("Running Ghost");
+		DrawTest frm = new DrawTest("Running Ghost");
 		
 		Game game = new Game();
 		
